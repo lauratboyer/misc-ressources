@@ -1,0 +1,200 @@
+\documentclass{article}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{fullpage}
+\usepackage{color}
+
+\newcommand{\tl} {\textless}
+\newcommand{\tg} {\textgreater}
+\renewcommand{\labelitemi}{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\definecolor{darkgreen}{rgb}{0,0.5,0}
+\definecolor{darkblue}{rgb}{0,0,0.5}
+\hypersetup{colorlinks,
+linkcolor=darkgreen,
+urlcolor=darkblue}
+\begin{document}
+\noindent{\Large How to convert a latex document into a Word .docx}\\
+Author: Laura Tremblay-Boyer, l.boyer@fisheries.ubc.ca\\
+\\
+\emph{Note 1: This was written for Mac/UNIX users, but most instructions should be
+valid for Windows.}\\
+\\
+\emph{Note 2: There are many ways to do this, and I have found none at this stage
+that are perfect. The best option in my opinion is to use latex2rtf
+(see section \ref{sec::rtf}) which converts .tex to a .rtf (Rich Text File),
+which is in turn readable by Word. The manual changes that you have to
+do for the latter are minimal, but it is a tad confusing to
+install. Once that hurdle is past though, you are good to go. I
+included instructions for another option, Pandoc (see section \ref{sec::pandoc}), which is very easy
+to install and can handle conversions between many, many file formats -- but
+the resulting .docx lacks some features that are a pain to correct
+manually (e.g. in-text references). Still, it is a good ressource to
+have given its versatility.}\\
+\\
+\emph{Both latex2rtf and Pandoc requires you to use the command line,
+  via the Terminal (which apparently has an equivalent in Windows called
+PowerShell? ...unverified). To find it, type ``Terminal'' in the
+Spotlight search bar.}\\
+\\
+\noindent $\rightarrow$ to view the instructions for \emph{latex2rtf}, \hyperref[sec::rtf]{click here}.\\
+\noindent $\rightarrow$ to view the instructions for \emph{Pandoc}, \hyperref[sec::pandoc]{click here}.
+
+\section{The almost-quick-and-easy-and-almost-perfect way:
+  latex2rtf}
+\label{sec::rtf}
+\emph{I wrote this for Mac/UNIX users, see this webpage for instructions
+  for Windows:} \url{http://latex2rtf.sourceforge.net/usage.html}.
+
+\subsection{Installation}
+\begin{enumerate}
+\item Download latex2rtf and unpack it:
+  \url{http://sourceforge.net/projects/latex2rtf/}
+\item Open the terminal and navigate to the unpacked \texttt{latex2rtf}
+  directory, for e.g.: \\
+\texttt{cd ~/Downloads/latex2rtf-2.3.3/}
+\item Once in the directory, type the following commands one at a
+  time:\\
+\\
+\texttt{make}\\
+\\
+\texttt{make check}\\
+\\
+\texttt{make install}\\
+\\
+If you get a 'Permission denied...' message here, try adding $sudo$ before the
+command (it will ask for the administrator's password, and should then
+proceed normally):\\
+\texttt{sudo make install}
+\item Verify that latex2rtf installed properly by typing: \\
+\texttt{latex2rtf -v}\\
+... if this produces something intelligible, you are good to go.
+\item If this didn't work for you, darn. You probably have to make
+  changes to the Makefile. Open in a text-editor the README that comes
+  with the program for further instructions. If you are using a Mac
+  you might get a message that this comes from an unidentified
+  developer and cannot be opened. CTRL-click Open the file
+  name and it should let you open the file despite the warning.
+\end{enumerate}
+
+\subsection{Converting .tex to .RTFs}
+
+\begin{enumerate}
+\item Open the Terminal and go to the directory containing the latex file
+  you want to convert:\\
+\texttt{cd ~/Documents/.../my-directory-of-choice}
+\item (Optional) Once in the directory, you can use \texttt{ls} to list
+  the files it contains --- you should be able to see the file
+  you want to convert.
+\item Create a copy of your file (just in case, but probably not necessary).
+\item Type the following command:\\
+\texttt{latex2rtf your-file-name.tex} \\
+... this should produce the file \texttt{your-file-name.rtf}. Note the
+.rtf extension. During the conversion, watch out for warnings of the type ``Package/option ... unknown'' --
+you will have to modify manually whatever settings were changed by
+these options as they were not imported in the .rtf.
+\item Open the \texttt{your-file-name.rtf} in Word... Most things should be
+  there, but have a scan through to see if anything is missing. For
+  instance if you used the package \texttt{fullpage} you will have to
+  change the margins of the Word document back to 2.5cm. If you had
+  pages in landscape format you'll have to add
+  those manually by adding a section break before the desired
+  landscape page and changing the orientation for that page only.
+\item When you are done use Word to save the .rtf to a .docx. And you
+  are done. Party!
+\end{enumerate}
+
+
+
+
+\section{The kinda-quick-and-easy-but-not-perfect way: Pandoc}
+\label{sec::pandoc}
+This method handles 95\% of formatting, figures and bibliography --- and
+it comes with its own installer (just
+double-click the .dmg). It doesn't do mixed portrait and landscape pages, in-text references to
+figures and tables, and probably other stuff that I can't think of
+right now. However it can convert between a number of file formats,
+see \url{http://johnmacfarlane.net/pandoc/diagram.png} (... \emph{right?!}).
+
+Once you have specified the right options, the output .docx doesn't require manual alterations. It is probably
+good for sending to a supervisor or collaborator (who you will have forewarned of
+minor formatting issues) but not as the final version to, say, a thesis
+committee or a journal.\\
+\\
+Here goes:
+
+\begin{enumerate}
+\item Download and install Pandoc: \url{http://johnmacfarlane.net/pandoc/installing.html}
+\item Open the Terminal and confirm that
+  Pandoc is installed by typing:\\
+\texttt{pandoc {--}version}\\ (if it is not installed it will print \texttt{command not found}).
+\item Navigate to the directory containing the file you want to
+  convert using the command \texttt{cd} (use \texttt{pwd} to see where you are
+  presently):\\
+\texttt{cd ~/Documents/Manuscripts/}
+\item (Optional) Once in the right directory, you can use \texttt{ls} to list
+  the files in the directory --- you should be able to see the file
+  you want to convert.
+\item Create a copy of your file (just in case).
+\item Now, tell pandoc to convert your file from latex to docx:\\
+\texttt{pandoc your-file-name.tex -f latex -t docx -s -o
+ output-file-name-of-your-choice.docx \tl other options as
+needed \tg}
+\begin{itemize}
+\item -f \tl...\tg: the format you are converting \emph{from}
+\item -t \tl...\tg: the format you are converting \emph{to}
+\item -o \tl...\tg: the desired \emph{output} file name, with the
+  extension
+\end{itemize}
+\item To see the many options that can be added to the pandoc command,
+  go here: \url{http://johnmacfarlane.net/pandoc/README.html#options}.
+\item Some miscellaneous things that should come in handy:
+
+\begin{itemize}
+\item Bibliography: If you have a bibliography, tell Pandoc where to find it by
+  adding the option \texttt{ {--}bibliography = your-bibliography-file-name.bib}.
+
+\item Figures: At this stage your document looks pretty good \emph{except} for wonky
+  figure sizes which do not match those you defined in your .tex
+  (shoot). Here's why: Pandoc imports the figure at its
+  original size and ignores the size settings you defined in the
+  .tex. Thanks Pandoc. The easy way around this (and this is only a
+  pain once) is to make sure that you always produce your figures in a
+  size that is adequate for a Word document. This way you can fiddle
+  with size in the .tex, but when you convert it to Word the figure
+  looks good. If you produce directly the figure from R you can define
+  a width and height in your code --- e.g. pdf(..., width = X, height=
+  Y). If you have a Mac you can open the image in Preview, go to Tools
+  $\rightarrow$ Adjust size and modify the size directly. As a rule of
+  thumb I find that using the width of the between-margins distance of
+  a standard Word document works well --- in my case that is 15.8cm,
+  or 6.22 inches. If you get in the habit of producing images of an
+  appropriate size as you go, this is not too much of a pain. And this
+  way you can also set the DPI to have a figure resolution that makes
+  you happy.
+
+\item Error messages: Could not find image '...': go back to your .tex
+  and make sure the extension is included in the image's file name, or
+  if all your images have the same extension add the option
+  \texttt{{--}default-image-extension=...}.
+
+\item In-text references: Pandoc does not translate in-text references to Word (which is
+  too bad as that is one of the coolest features of Latex)(that being
+  said Word usually doesn't handle those well --- but that's another
+  story). What Pandoc does instead is copy the value of the label/ref
+  literally in the Word document. For instance if you have in .tex
+  ``see Figure {\textbackslash ref\{fig::dispersal\}}'', which would render in the PDF
+  as ``see Figure 4'' (and the 4 would be clickable), in the Pandoc translation .docx it will look
+  like ``see Figure [fig::dispersal]''. Adding option \texttt{{--}parse-raw} removes
+  the [...] labels as specified in the .tex's \textbackslash label and
+  \textbackslash ref, which looks cleaner but gives no indication to
+  your reader of the figure, table or section you are linking to. My
+  suggestion is to leave the [...] labels in (i.e. not use the
+  \texttt{{--}parse-raw} option) and warn the reader that they can search for
+  the label using CTRL-F to find the figure, table or section that is
+  being referred to.
+
+\end{itemize}
+
+\end{enumerate}
+\end{document}
